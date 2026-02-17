@@ -42,28 +42,33 @@ class Boggle:
 
             tile = letter.lower()
 
+            # allow regular single letters
+            if len(tile) == 1 and tile.isalpha():
+                # lone q not allowed
+                if tile == 'q':
+                    return False
+                # lone s not allowed
+                if tile == 's':
+                    return False
+                continue
+
             # if tile starts with q, it must be "qu"
             if tile.startswith('q') and tile != 'qu':
-                return False
-
-            # if tile starts with i, it must be "iu"
-            if tile.startswith('i') and tile != 'iu':
                 return False
 
             # if tile starts with s, it must be "st"
             if tile.startswith('s') and tile != 'st':
                 return False
 
+            # only allow "qu" or "st" as multi-letter tiles
+            if tile != 'qu' and tile != 'st':
+                return False
+
       return True
 
 
-    """
-    def isValidDictionary(self):#check if dictionary exists and is not empty
-        if self.dictionary is None or len(self.dictionary) == 0:
-            return False
-    """
     def isValidDictionary(self): #check if dictionary exists and is not empty
-      return isinstance(self.dictionary, (list, set))
+      return isinstance(self.dictionary, (list, set)) and len(self.dictionary) > 0
 
 
     #check if dictionary is an array of words and if uses letter
