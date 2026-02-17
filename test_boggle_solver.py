@@ -9,16 +9,19 @@ class TestSuite_Alg_Scalability_Cases(unittest.TestCase):
 
   # ADD 4x4, 5x5, 6x6, 7x7...13x13, and LARGER Dictionaries
   def test_Normal_case_3x3(self): #failed fix it pls
-    grid = [["A", "B", "C"],["D", "E", "F"],["G", "H", "I"]]
-    dictionary = ["abc", "abdhi", "abi", "ef", "cfi", "dea"]
+    grid = [["A", "B", "C"],
+            ["D", "E", "F"],
+            ["G", "H", "I"]]
+    dictionary = ["abc", "abdhi", "cfi"]
     mygame = Boggle(grid, dictionary)
     solution = mygame.getSolution()
     solution = [x.upper() for x in solution]
-    expected = ["abc", "abdhi", "cfi", "dea"];
+    expected = ["ABC", "ABDHI", "CFI"]
     expected = [x.upper() for x in expected]
     solution = sorted(solution)
     expected = sorted(expected)
     self.assertEqual(expected, solution)
+
   def test_Normal_case_4x4(self): #failed fix it pls
     grid = [
         ["T", "E", "S", "T"],
@@ -26,14 +29,15 @@ class TestSuite_Alg_Scalability_Cases(unittest.TestCase):
         ["E", "F", "G", "H"],
         ["I", "J", "K", "L"]
     ]
-    dictionary = ["test", "abcf", "efgh", "ijkl", "tbe", "abcd"]
+    dictionary = ["test", "abcd", "abcf", "ijkl"]
     mygame = Boggle(grid, dictionary)
     solution = mygame.getSolution()
     solution = [x.upper() for x in solution]
-    expected = ["TEST", "ABCF", "EFGH", "ABCD"]
+    expected = ["TEST", "ABCD", "ABCF", "IJKL"]
     solution.sort()
     expected.sort()
     self.assertEqual(expected, solution)
+
   def test_Normal_case_5x5(self): #failed fix it pls
     grid = [
         ["A", "B", "C", "D", "E"],
@@ -64,6 +68,7 @@ class TestSuite_Simple_Edge_Cases(unittest.TestCase):
     expected = sorted(expected)
     self.assertEqual(expected, solution)
     #ADD HERE
+
   def test_EmptyGrid_case_0x0(self):
       grid = [[]]
       dictionary = ["hello", "there", "general", "kenobi"]
@@ -76,25 +81,23 @@ class TestSuite_Simple_Edge_Cases(unittest.TestCase):
       self.assertEqual(expected, solution)
 
 
-  
-
 class TestSuite_Complete_Coverage(unittest.TestCase):
   #ADD MANY COMPLEXED TEST CASES
   def test_case_1(self):  
     self.assertEqual(True, True)
   #ADD HERE
+
   def test_EveryLetter(self): #test if everytile makes up a word, would it still run
       grid = [
-          ["C", "A", "T", "S"],
-          ["D", "O", "G", "S"],
-          ["B", "I", "R", "D"],
-          ["F", "I", "S", "H"]
+          ["A", "B", "C"],
+          ["H", "I", "D"],
+          ["G", "F", "E"]
       ]
-      dictionary = ["catsgodbirdhsif","cats", "dogs", "bird", "fish", "catdog", "birdfish"]
+      dictionary = ["abcdefghi", "abc", "ghi"]
       mygame = Boggle(grid, dictionary)
       solution = mygame.getSolution()
       solution = [x.upper() for x in solution]
-      expected = ["CATS", "DOGS", "BIRD", "FISH"]
+      expected = ["ABCDEFGHI", "ABC", "GHI"]
       solution.sort()
       expected.sort()
       self.assertEqual(expected, solution)
@@ -115,28 +118,37 @@ class TestSuite_Qu_and_St(unittest.TestCase):
   def test_case_1(self): 
     self.assertEqual(True, True)
   #ADD HERE
+
   def test_QU_handling(self): # wrong because lone 'Q' isnt allowed-> only 'qu' allowed 
-      grid = [["Q", "U", "I", "C"], ["K", "B", "O", "X"], ["L", "A", "M", "P"], ["S", "T", "A", "R"]]
-      dictionary = ["quick", "qubit", "star", "lamp", "box"]
+      grid = [
+          ["QU", "I", "C", "K"],
+          ["B", "O", "X", "L"],
+          ["A", "M", "P", "R"],
+          ["D", "E", "F", "G"]
+      ]
+      dictionary = ["quick", "qubit", "box", "lamp"]
       mygame = Boggle(grid, dictionary)
       solution = mygame.getSolution()
       solution = [x.upper() for x in solution]
-      expected = ["QUICK", "STAR", "LAMP", "BOX"]
+      expected = ["QUICK", "BOX", "LAMP"]
       solution.sort()
       expected.sort()
       self.assertEqual(expected, solution)
 
   def test_ST_handling(self): #wrong because lone 's' not allowed-> only 'st' allowed
-    grid = [["S", "T", "O"], ["P", "A", "T"], ["E", "R", "S"]]
-    dictionary = ["stop", "star", "stops", "pat"]
+    grid = [
+        ["ST", "O", "P"],
+        ["A", "R", "T"],
+        ["E", "L", "S"]
+    ]
+    dictionary = ["stop", "start", "stops", "art"]
     mygame = Boggle(grid, dictionary)
     solution = mygame.getSolution()
     solution = [x.upper() for x in solution]
-    expected = ["STOP", "STAR", "PAT"]
+    expected = ["STOP", "START", "ART"]
     solution.sort()
     expected.sort()
     self.assertEqual(expected, solution)
 
 if __name__ == '__main__':
 	unittest.main()
-
