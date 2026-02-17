@@ -8,7 +8,7 @@ from boggle_solver import Boggle
 class TestSuite_Alg_Scalability_Cases(unittest.TestCase):
 
   # ADD 4x4, 5x5, 6x6, 7x7...13x13, and LARGER Dictionaries
-  def test_Normal_case_3x3(self):
+  def test_Normal_case_3x3(self): #failed fix it pls
     grid = [["A", "B", "C"],["D", "E", "F"],["G", "H", "I"]]
     dictionary = ["abc", "abdhi", "abi", "ef", "cfi", "dea"]
     mygame = Boggle(grid, dictionary)
@@ -19,7 +19,7 @@ class TestSuite_Alg_Scalability_Cases(unittest.TestCase):
     solution = sorted(solution)
     expected = sorted(expected)
     self.assertEqual(expected, solution)
-  def test_Normal_case_4x4(self):
+  def test_Normal_case_4x4(self): #failed fix it pls
     grid = [
         ["T", "E", "S", "T"],
         ["A", "B", "C", "D"],
@@ -34,7 +34,7 @@ class TestSuite_Alg_Scalability_Cases(unittest.TestCase):
     solution.sort()
     expected.sort()
     self.assertEqual(expected, solution)
-  def test_Normal_case_5x5(self):
+  def test_Normal_case_5x5(self): #failed fix it pls
     grid = [
         ["A", "B", "C", "D", "E"],
         ["F", "G", "H", "I", "J"],
@@ -83,14 +83,14 @@ class TestSuite_Complete_Coverage(unittest.TestCase):
   def test_case_1(self):  
     self.assertEqual(True, True)
   #ADD HERE
-  def test_LongWords(self):
+  def test_EveryLetter(self): #test if everytile makes up a word, would it still run
       grid = [
           ["C", "A", "T", "S"],
           ["D", "O", "G", "S"],
           ["B", "I", "R", "D"],
           ["F", "I", "S", "H"]
       ]
-      dictionary = ["cats", "dogs", "bird", "fish", "catdog", "birdfish"]
+      dictionary = ["catsgodbirdhsif","cats", "dogs", "bird", "fish", "catdog", "birdfish"]
       mygame = Boggle(grid, dictionary)
       solution = mygame.getSolution()
       solution = [x.upper() for x in solution]
@@ -115,7 +115,7 @@ class TestSuite_Qu_and_St(unittest.TestCase):
   def test_case_1(self): 
     self.assertEqual(True, True)
   #ADD HERE
-  def test_QU_handling(self):
+  def test_QU_handling(self): # wrong because lone 'Q' isnt allowed-> only 'qu' allowed 
       grid = [["Q", "U", "I", "C"], ["K", "B", "O", "X"], ["L", "A", "M", "P"], ["S", "T", "A", "R"]]
       dictionary = ["quick", "qubit", "star", "lamp", "box"]
       mygame = Boggle(grid, dictionary)
@@ -126,7 +126,7 @@ class TestSuite_Qu_and_St(unittest.TestCase):
       expected.sort()
       self.assertEqual(expected, solution)
 
-  def test_ST_handling(self):
+  def test_ST_handling(self): #wrong because lone 's' not allowed-> only 'st' allowed
     grid = [["S", "T", "O"], ["P", "A", "T"], ["E", "R", "S"]]
     dictionary = ["stop", "star", "stops", "pat"]
     mygame = Boggle(grid, dictionary)

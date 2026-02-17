@@ -22,44 +22,64 @@ class Boggle:
 
 #check if theres a letter, instead of i-> iu and q->qu and S->st
     def isValidGrid(self):
-        #check if grid exists
-        if self.grid is None or len(self.grid) == 0:
-            return False
-        gridSize = len(self.grid)
+      # check if grid exists
+      if self.grid is None or len(self.grid) == 0:
+        return False
 
-        #check if grid size is valid (NxN)
-        for row in self.grid:
-            if len(row) != gridSize:
+      gridSize = len(self.grid)
+
+      # check if grid is NxN
+      for row in self.grid:
+        if len(row) != gridSize:
+            return False
+
+      # check special tile rules
+      for row in self.grid:
+        for letter in row:
+
+            if not isinstance(letter, str) or len(letter) == 0:
                 return False
 
-        #check if there are no raw q's, s's, I's
-        for row in self.grid:
-            for letter in row:
-                if letter.lower() == 'q' or letter.lower() == 's' or letter.lower() == 'i':
-                    return False
+            tile = letter.lower()
 
-        #return true or False
-        return True
+            # if tile starts with q, it must be "qu"
+            if tile.startswith('q') and tile != 'qu':
+                return False
+
+            # if tile starts with i, it must be "iu"
+            if tile.startswith('i') and tile != 'iu':
+                return False
+
+            # if tile starts with s, it must be "st"
+            if tile.startswith('s') and tile != 'st':
+                return False
+
+      return True
 
 
+    """
     def isValidDictionary(self):#check if dictionary exists and is not empty
         if self.dictionary is None or len(self.dictionary) == 0:
             return False
+    """
+    def isValidDictionary(self): #check if dictionary exists and is not empty
+      return isinstance(self.dictionary, (list, set))
+
 
     #check if dictionary is an array of words and if uses letter
-        for word in self.dictionary:
-            if not isinstance(word, str):
-                return False
-            if not word.isalpha():
-                return False
+      for word in self.dictionary:
+          if not isinstance(word, str):
+            return False
+          if not word.isalpha():
+            return False
 
     #check if there are no empty words
-        for word in self.dictionary:
-            if len(word) == 0:
-                return False
+      for word in self.dictionary:
+          if len(word) == 0:
+            return False
 
     #return true or False
-        return True
+      return True
         
 
     def build_fast_dictionary(self):
