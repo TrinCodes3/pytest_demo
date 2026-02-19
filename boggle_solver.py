@@ -1,207 +1,113 @@
-#depth first traversal, call dfs and use for loop to iterate through loops, use base case
-#start with check to make sure the grid is a valid grid
-
 class Boggle:
     def __init__(self, grid, dictionary):
         self.grid = self.convert_grid_to_lowercase(grid)  # 2D list representing the board
         self.dictionary = self.convert_dictionary_to_lowercase(dictionary)  # list of words to search for
         self.solutions = []  # found words
         self.rows = len(grid)
-        self.cols = len(grid[0]) if grid else 0
+        self.cols = len(grid[0]) if grid and len(grid) > 0 and len(grid[0]) > 0 else 0
         self.fast_dict = {}
-        self.solution_set = set() #changed Set() to set()
-        
+        self.solution_set = set()
+        self.visited = None
 
-    def convert_dictionary_to_lowercase(self, dictionary):
-      return [string.lower() for string in dictionary]
-    
     def convert_grid_to_lowercase(self, grid):
-      return [[string.lower() for string in inner_list] for inner_list in grid]
-      
-
-
-#check if theres a letter, instead of i-> iu and q->qu and S->st
-    def isValidGrid(self):
-      # check if grid exists
-      if self.grid is None or len(self.grid) == 0:
-        return False
-
-      gridSize = len(self.grid)
-
-      # check if grid is NxN
-      for row in self.grid:
-        if len(row) != gridSize:
-            return False
-
-      # check special tile rules
-      for row in self.grid:
-        for letter in row:
-
-            if not isinstance(letter, str) or len(letter) == 0:
-                return False
-
-            tile = letter.lower()
-
-            # allow regular single letters
-            if len(tile) == 1 and tile.isalpha():
-                # lone q not allowed
-                if tile == 'q':
-                    return False
-                # lone s not allowed
-                if tile == 's':
-                    return False
-                continue
-
-            # if tile starts with q, it must be "qu"
-            if tile.startswith('q') and tile != 'qu':
-                return False
-
-            # if tile starts with s, it must be "st"
-            if tile.startswith('s') and tile != 'st':
-                return False
-
-            # only allow "qu" or "st" as multi-letter tiles
-            if tile != 'qu' and tile != 'st':
-                return False
-
-      return True
-
-
-    def isValidDictionary(self): #check if dictionary exists and is not empty
-      return isinstance(self.dictionary, (list, set)) and len(self.dictionary) > 0
-
-
-    #check if dictionary is an array of words and if uses letter
-      for word in self.dictionary:
-          if not isinstance(word, str):
-            return False
-          if not word.isalpha():
-            return False
-
-    #check if there are no empty words
-      for word in self.dictionary:
-          if len(word) == 0:
-            return False
-
-    #return true or False
-      return True
+        """Convert all cells in grid to lowercase"""
+        if not grid or not grid[0]:
+            return grid
         
-
-    def build_fast_dictionary(self):
-        fast_dict = {}
+        new_grid = []
+        for row in grid:
+            new_row = []
+            for cell in row:
+                # Handle special tiles like "Qu" - convert to lowercase
+                new_row.append(cell.lower())
+            new_grid.append(new_row)
+        return new_grid
+    
+    def convert_dictionary_to_lowercase(self, dictionary):
+        """Convert all words in dictionary to lowercase"""
+        return [word.lower() for word in dictionary]
+    
+    def getgrid(self):
+        """Return the grid"""
+        return self.grid
+    
+    def getdictionary(self):
+        """Return the dictionary"""
+        return self.dictionary
+    
+    def exists(self, word):
+        """Check if a word exists in the dictionary"""
+        return word.lower() in self.dictionary
+    
+    def has_prefix(self, prefix):
+        """Check if any word in dictionary starts with the given prefix"""
         for word in self.dictionary:
-            prefix = ""
-            for char in word:
-                prefix += char
-                if prefix not in fast_dict:
-                    fast_dict[prefix] = 0
-            fast_dict[word] = 1
-        return fast_dict
-
-    def find_all_words(self, y, x, current_word, visited):
-        # ----- Base Case -----
-        if y < 0 or y >= self.rows or x < 0 or x >= self.cols:
+            if word.startswith(prefix):
+                return True
+        return False
+    
+    def dfs(self, row, col, current_word):
+        """Depth-first search to find words starting from position (row, col)"""
+        # Check boundaries
+        if row < 0 or row >= self.rows or col < 0 or col >= self.cols:
             return
-        if visited[y][x]:
+        
+        # Check if cell already visited
+        if self.visited[row][col]:
             return
-
-        # ----- Form New Word -----
-        new_word = current_word + self.grid[y][x]
-
-        # ----- Prefix Pruning -----
-        if new_word not in self.fast_dict:
-            return
-
-        # ----- Word Found -----
-# Only add complete words with length >= 3 (Boggle rule + test requirement)
-        if self.fast_dict[new_word] == 1 and len(new_word) >= 3:
-            self.solution_set.add(new_word)
-
-
-        # ----- DFS -----
-        visited[y][x] = True
-
-        for dy in [-1, 0, 1]:
-            for dx in [-1, 0, 1]:
-                if dy != 0 or dx != 0:
-                    self.find_all_words(y + dy, x + dx, new_word, visited)
-
-        # ----- Backtrack -----
-        visited[y][x] = False
-
-
-
-    def setGrid(self, grid):
-        self.grid = grid  # update grid with an existing grid
-
-    def setDictionary(self, dictionary):
-        self.dictionary = dictionary 
+        
+        # Mark current cell as visited
+        self.visited[row][col] = True
+        
+        # Get current cell value
+        cell_value = self.grid[row][col]
+        
+        # Build new word
+        new_word = current_word + cell_value
+        
+        # Check if this word exists in dictionary (minimum length 3)
+        # IMPORTANT: Words cannot end with 'q' - only 'qu' is allowed
+        if len(new_word) >= 3 and new_word in self.dictionary:
+            # Make sure the word doesn't end with 'q' (should be 'qu' instead)
+            if not new_word.endswith('q'):
+                self.solution_set.add(new_word.upper())
+        
+        # REMOVED: The special handling that created words ending with 'q'
+        # We don't add alternative words with 'q' anymore
+        
+        # Check if this prefix could lead to any word (pruning)
+        if self.has_prefix(new_word):
+            # Explore all 8 adjacent cells
+            for dr in [-1, 0, 1]:
+                for dc in [-1, 0, 1]:
+                    if dr == 0 and dc == 0:
+                        continue
+                    self.dfs(row + dr, col + dc, new_word)
+        
+        # Backtrack: unmark current cell
+        self.visited[row][col] = False
     
     def getSolution(self):
-        # Check each word in the dictionary
-        if self.isValidGrid() == False or self.isValidDictionary() == False:
-          print("Grid Invalid or Dictionary Invalid")
-          return self.solutions
-
-        self.fast_dict = self.build_fast_dictionary()
-        #solution_set = set() #changed Set() to set()
-
-        for y in range(self.rows):
-            for x in range(self.cols):
-                visited = [[False] * self.cols for _ in range(self.rows)]
-                self.find_all_words(y, x, "", visited)
-
-        return list(self.solution_set)
-
-
-    def getgrid(self):
-      return self.grid 
-
-    def getdictionary(self):
-      return self.dictionary
-
-    def exists(self, word):
-        # Lowercase the word for consistent comparison
-        word_lower = word.lower()
-        # Try every starting position in the grid
-        for row_index in range(self.rows):
-            for col_index in range(self.cols):
-                if self.search(row_index, col_index, word_lower, 0, set()):
-                    return True
-        return False
-
-    def search(self, row_index, col_index, word_lower, word_index, visited_positions):
-        # Base case: fully matched
-        if word_index == len(word_lower):
-            return True
-
-        # Out of bounds or already visited
-        if (row_index < 0 or row_index >= self.rows or
-            col_index < 0 or col_index >= self.cols or
-            (row_index, col_index) in visited_positions):
-            return False
-
-        cell_value_lower = self.grid[row_index][col_index].lower()
-
-        # If the current cell does not match the next part of the word
-        if not word_lower.startswith(cell_value_lower, word_index):
-            return False
-
-        # Mark current cell as visited
-        visited_positions.add((row_index, col_index))
-        next_index = word_index + len(cell_value_lower)
-
-        # Explore all 8 directions
-        for delta_row in [-1, 0, 1]:
-            for delta_col in [-1, 0, 1]:
-                if delta_row != 0 or delta_col != 0:
-                    if self.search(row_index + delta_row, col_index + delta_col, word_lower, next_index, visited_positions.copy()):
-                        return True
-
-        # Backtrack
-        visited_positions.remove((row_index, col_index))
-        return False
-
+        """Main method to find all words in the boggle grid"""
+        # Clear previous solutions
+        self.solutions = []
+        self.solution_set = set()
+        
+        # Handle edge cases
+        if self.rows == 0 or self.cols == 0:
+            return []
+        
+        # Initialize visited matrix
+        self.visited = [[False for _ in range(self.cols)] for _ in range(self.rows)]
+        
+        # Start DFS from each cell
+        for i in range(self.rows):
+            for j in range(self.cols):
+                self.dfs(i, j, "")
+        
+        # Convert solution set to list
+        self.solutions = list(self.solution_set)
+        return self.solutions
 
 def main():
     grid = [
@@ -219,4 +125,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

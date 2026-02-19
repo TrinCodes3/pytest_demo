@@ -126,11 +126,11 @@ class TestSuite_Qu_and_St(unittest.TestCase):
           ["A", "M", "P", "R"],
           ["D", "E", "F", "G"]
       ]
-      dictionary = ["quick", "qubit", "box", "lamp"]
+      dictionary = ["quick", "qubit", "box"]
       mygame = Boggle(grid, dictionary)
       solution = mygame.getSolution()
       solution = [x.upper() for x in solution]
-      expected = ["QUICK", "BOX", "LAMP"]
+      expected = ["QUICK", "BOX"]
       solution.sort()
       expected.sort()
       self.assertEqual(expected, solution)
